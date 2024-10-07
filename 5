@@ -1,0 +1,64 @@
+Table Creation:
+
+create table stud_marks(roll_no int, name varchar(20), total_marks int);
+create table result(roll_no int, name varchar(20), class varchar(20));
+
+
+
+
+Data Insertion into stud_marks table:
+
+insert into stud_marks (roll_no, name, total_marks) values (1, 'AAA', 1450);
+insert into stud_marks (roll_no, name, total_marks) values (2, 'BBB', 1300);
+insert into stud_marks (roll_no, name, total_marks) values (3, 'CCC', 945);
+insert into stud_marks (roll_no, name, total_marks) values (4, 'DDD', 850);
+insert into stud_marks (roll_no, name, total_marks) values (5, 'EEE', 775);
+insert into stud_marks (roll_no, name, total_marks) values (6, 'FFF', 671);
+insert into stud_marks (roll_no, name, total_marks) values (7, 'GGG', 640);
+
+
+
+Data Retrieval from stud_marks table:
+
+select * from stud_marks;
+
+
+
+delimiter //
+
+create procedure grade_proc(in marks int, out class varchar(20))
+begin
+    if marks>=90 and marks<=100 then set class:='DIST';
+    elseif marks>=80 and marks<90 then set class:='FIRST';
+    elseif marks>=70 and marks<80 then set class:='SECOND';
+    elseif marks>=60 and marks<70 then set class:='THIRD';
+    elseif marks>=50 and marks<60 then set class:='PASS';
+    elseif marks<50 then set class:='FAIL';
+    end if;
+end //
+delimiter ;
+
+
+delimiter //
+
+create function get_grade(marks int) returns varchar(20)
+begin
+    declare grade varchar(20);
+
+    if marks>=90 and marks<=100 then set grade:='DIST';
+    elseif marks>=80 and marks<90 then set grade:='FIRST';
+    elseif marks>=70 and marks<80 then set grade:='SECOND';
+    elseif marks>=60 and marks<70 then set grade:='THIRD';
+    elseif marks>=50 and marks<60 then set grade:='PASS';
+    elseif marks<50 then set grade:='FAIL';
+    end if;
+
+    return grade;
+end //
+delimiter ;
+
+select find_result(4);
+select * from result;
+select find_result(1);
+select * from result;
+
