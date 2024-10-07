@@ -1,0 +1,39 @@
+
+create table borrower(RollIN int primary key , Name varchar(20), DateofIssue date, NameofBook varchar(20), status varchar(20));
+
+create table fine(RollNO int, foreign key(RollNo) references borrower(RollIN), ReturnDate date, Amount int);
+
+insert into borrower(RollIN, Name, DateofIssue, NameofBook, status) values
+(1, 'onkar', '2020-05-15', 'DMS', 'PENDING'),
+(2, 'nikhil', '2022-12-12', 'SPOS', 'PENDING'),
+(3, 'ram', '2023-12-12', 'Cns', 'PENDING');
+
+select * from borrower;
+
+delimiter $
+create procedure myprocedure(in roll int)
+begin
+declare totalfine int;
+declare noofdays int;
+declare issuedate date;
+declare exit handler for sqlexception select 'create table defination';
+select DateofIssue into issuedate from borrower where RollIN = roll;
+if noofdays > 15 and noofdays <= 30 then 
+    set totalfine = noofdays * 5;
+    insert into fine values(roll, curdate(), totalfine);
+elseif noofdays > 30 then 
+    set totalfine = ((noofdays - 30) * 50) + 15 * 5;
+    insert into fine values(roll, curdate(), totalfine);
+else 
+    insert into fine values(roll, curdate(), 0);
+end if;
+update borrower set status = 'RETURN' where RollIN = roll;
+end $
+
+call myprocedure(1) $;
+
+call myprocedure(2) $;
+
+select * from fine;
+
+select * from borrower;
