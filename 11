@@ -1,0 +1,39 @@
+// Start MongoDB shell
+mongosh
+
+// Create database and collection
+use school
+db.createCollection("grades")
+
+// Insert sample data
+db.grades.insertMany([
+    { studentId: 1, course: "Mathematics", grade: 85 },
+    { studentId: 2, course: "Mathematics", grade: 90 },
+    { studentId: 3, course: "Mathematics", grade: 75 },
+    { studentId: 1, course: "Physics", grade: 80 },
+    { studentId: 2, course: "Physics", grade: 85 },
+    { studentId: 3, course: "Physics", grade: 90 },
+    { studentId: 1, course: "Chemistry", grade: 95 },
+    { studentId: 2, course: "Chemistry", grade: 88 },
+    { studentId: 3, course: "Chemistry", grade: 92 }
+])
+
+// Define map function
+var mapFunction = function() {
+    emit(this.course, this.grade);
+};
+
+// Define reduce function
+var reduceFunction = function(keyCourse, valuesGrades) {
+    return Array.sum(valuesGrades) / valuesGrades.length;
+};
+
+// Run MapReduce
+db.grades.mapReduce(
+    mapFunction,
+    reduceFunction,
+    { out: "averageGrades" }
+)
+
+// View results
+db.averageGrades.find()
