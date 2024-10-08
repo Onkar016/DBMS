@@ -1,0 +1,70 @@
+-- Create Library table
+CREATE TABLE Library (
+    book_id INT PRIMARY KEY,
+    title VARCHAR(255),
+    author VARCHAR(255),
+    published_year INT
+);
+
+-- Create Library_Audit table
+CREATE TABLE Library_Audit (
+    audit_id INT PRIMARY KEY AUTO_INCREMENT,
+    book_id INT,
+    title VARCHAR(255),
+    author VARCHAR(255),
+    published_year INT,
+    action VARCHAR(10),
+    change_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Row-Level Before Trigger for Updates
+CREATE OR REPLACE TRIGGER before_update_library
+BEFORE UPDATE ON Library
+FOR EACH ROW
+BEGIN
+    INSERT INTO Library_Audit (book_id, title, author, published_year, action)
+    VALUES (:OLD.book_id, :OLD.title, :OLD.author, :OLD.published_year, 'UPDATE');
+END;
+/
+
+-- Row-Level Before Trigger for Deletes
+CREATE OR REPLACE TRIGGER before_delete_library
+BEFORE DELETE ON Library
+FOR EACH ROW
+BEGIN
+    INSERT INTO Library_Audit (book_id, title, author, published_year, action)
+    VALUES (:OLD.book_id, :OLD.title, :OLD.author, :OLD.published_year, 'DELETE');
+END;
+/
+
+-- Statement-Level After Trigger for Updates
+CREATE OR REPLACE TRIGGER after_update_library
+AFTER UPDATE ON Library
+BEGIN
+    -- Optional: Log a message or perform another action
+    DBMS_OUTPUT.PUT_LINE('Records have been updated in the Library table.');
+END;
+/
+
+-- Statement-Level After Trigger for Deletes
+CREATE OR REPLACE TRIGGER after_delete_library
+AFTER DELETE ON Library
+BEGIN
+    -- Optional: Log a message or perform another action
+    DBMS_OUTPUT.PUT_LINE('Records have been deleted from the Library table.');
+END;
+/
+
+-- Insert Sample Data into Library
+INSERT INTO Library (book_id, title, author, published_year) VALUES (1, '1984', 'George Orwell', 1949);
+INSERT INTO Library (book_id, title, author, published_year) VALUES (2, 'Brave New World', 'Aldous Huxley', 1932);
+INSERT INTO Library (book_id, title, author, published_year) VALUES (3, 'Fahrenheit 451', 'Ray Bradbury', 1953);
+
+-- Update a Record in Library
+UPDATE Library SET title = 'Nineteen Eighty-Four' WHERE book_id = 1;
+
+-- Delete a Record from Library
+DELETE FROM Library WHERE book_id = 2;
+
+-- Check the Audit Table for Logged Changes
+SELECT * FROM Library_Audit;
