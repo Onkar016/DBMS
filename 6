@@ -58,6 +58,117 @@ end //
 delimiter ;
 
 select find_result(4);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Create table for student marks
+CREATE TABLE stud_marks (
+    roll_no INT PRIMARY KEY,
+    name CHAR(10),
+    total_marks INT
+);
+
+-- Insert data into stud_marks
+INSERT INTO stud_marks VALUES (101, 'abc', 933);
+INSERT INTO stud_marks VALUES (102, 'xyz', 356);
+INSERT INTO stud_marks VALUES (103, 'mnk', 450);
+INSERT INTO stud_marks VALUES (104, 'pqr', 675);
+INSERT INTO stud_marks VALUES (105, 'snk', 1300);
+INSERT INTO stud_marks VALUES (106, 'jnk', 250);
+
+-- Select all data from stud_marks
+SELECT * FROM stud_marks;
+
+-- Create result table
+CREATE TABLE result (
+    roll_no INT,
+    name CHAR(30),
+    class CHAR(20)
+);
+
+-- Change delimiter for procedure creation
+DELIMITER //
+
+-- Create procedure to assign class based on marks
+CREATE PROCEDURE proc_grade(IN marks INT, OUT class CHAR(10))
+BEGIN
+    IF marks <= 1500 AND marks >= 990 THEN 
+        SET class = 'DIST';
+    END IF;
+    IF marks <= 989 AND marks >= 900 THEN 
+        SET class = 'FC';
+    END IF;
+    IF marks <= 899 AND marks >= 825 THEN 
+        SET class = 'HSC';
+    END IF;
+    IF marks <= 824 AND marks >= 750 THEN 
+        SET class = 'SC';
+    END IF;
+    IF marks <= 749 AND marks >= 650 THEN 
+        SET class = 'PC';
+    END IF;
+    IF marks < 650 THEN 
+        SET class = 'fail';
+    END IF;
+END //
+
+-- Reset delimiter back to default
+DELIMITER ;
+
+-- Create function to find result and insert into result table
+CREATE FUNCTION find_result(roll_in INT) RETURNS INT DETERMINISTIC
+BEGIN
+    DECLARE fmarks INT;
+    DECLARE grade CHAR(10);
+    DECLARE stud_name CHAR(10);
+    
+    SELECT stud_marks.total_marks, stud_marks.name 
+    INTO fmarks, stud_name 
+    FROM stud_marks 
+    WHERE stud_marks.roll_no = roll_in;
+
+    CALL proc_grade(fmarks, @grade);
+    INSERT INTO result VALUES (roll_in, stud_name, @grade);
+    
+    RETURN roll_in; 
+END //
+
+-- Select result for roll number 104
+SELECT find_result(104) //
+
+-- Select all from result table
+SELECT * FROM result //
+
+-- Select result for roll number 101
+SELECT find_result(101) //
+
+-- Select all from result table again
+SELECT * FROM result //
+
+-- Select result for roll number 106
+SELECT find_result(106) //
+
+-- Select all from result table again
+SELECT * FROM result //
+
+-- Select result for roll number 104 again
+SELECT find_result(104) //
+
+-- Select all from result table to check duplicates
+SELECT * FROM result //
+
 select * from result;
 select find_result(1);
 select * from result;
