@@ -10,30 +10,47 @@ insert into borrower(RollIN, Name, DateofIssue, NameofBook, status) values
 
 select * from borrower;
 
-delimiter $
-create procedure myprocedure(in roll int)
-begin
-declare totalfine int;
-declare noofdays int;
-declare issuedate date;
-declare exit handler for sqlexception select 'create table defination';
-select DateofIssue into issuedate from borrower where RollIN = roll;
-if noofdays > 15 and noofdays <= 30 then 
-    set totalfine = noofdays * 5;
-    insert into fine values(roll, curdate(), totalfine);
-elseif noofdays > 30 then 
-    set totalfine = ((noofdays - 30) * 50) + 15 * 5;
-    insert into fine values(roll, curdate(), totalfine);
-else 
-    insert into fine values(roll, curdate(), 0);
-end if;
-update borrower set status = 'RETURN' where RollIN = roll;
-end $
+delimiter $$
 
-call myprocedure(1) $;
+CREATE PROCEDURE om(in roll int)
 
-call myprocedure(2) $;
+  BEGIN
 
-select * from fine;
+  DECLARE totalfine int;
+
+   DECLARE noofdays int;
+
+    DECLARE issuedate date;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION SELECT 'CREATE TABLE DEFINITION';
+
+     SELECT DateofIssue INTO issuedate FROM borrower WHERE RollIn=roll;
+
+     SELECT DATEDIFF(CURDATE(),issuedate) INTO noofdays;
+
+     IF noofdays > 15 AND noofdays < 30 THEN SET totalfine = noofdays * 5;
+
+     INSERT INTO fine VALUES(roll,CURDATE(),totalfine);
+
+     ELSEIF noofdays > 30 THEN SET totalfine = ((noofdays-30)*50)+15*5;
+
+    INSERT INTO fine VALUES(roll,CURDATE(),totalfine);
+
+     ELSE INSERT INTO fine VALUES(roll,CURDATE(),0);
+
+     END IF;
+
+     UPDATE borrower SET status='RETURN' WHERE rollIn=roll;
+
+     END $$
+
+
+
+
+call om(1) ; $$
+
+call om(2) ; $$
+
+select * from fine; $$
 
 select * from borrower;
