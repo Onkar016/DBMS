@@ -1,0 +1,63 @@
+-- Create the library table
+CREATE TABLE library (
+    book_id INT PRIMARY KEY,
+    book_name VARCHAR(25),
+    author_name VARCHAR(40),
+    price INT
+);
+
+-- Insert data into library
+INSERT INTO library(book_id, book_name, author_name, price) VALUES (1, 'early india', 'ramila thapar', 1200);
+INSERT INTO library(book_id, book_name, author_name, price) VALUES (2, 'verity', 'colleen hoover', 1600);
+INSERT INTO library(book_id, book_name, author_name, price) VALUES (3, 'Nelson mandela', 'Hovely reads', 900);
+INSERT INTO library(book_id, book_name, author_name, price) VALUES (4, 'everyday gita', 'sunita pant', 1500);
+INSERT INTO library(book_id, book_name, author_name, price) VALUES (5, 'b1', 'a1', 2000);
+
+-- Create the library_audit table
+CREATE TABLE library_audit (
+    old_book_id INT,
+    old_book_name VARCHAR(25),
+    old_author_name VARCHAR(40),
+    old_price INT,
+    operation_type VARCHAR(20)
+);
+
+-- Set delimiter to define the triggers
+DELIMITER //
+
+-- Create BEFORE UPDATE trigger
+CREATE TRIGGER before_library_update
+BEFORE UPDATE ON library
+FOR EACH ROW
+BEGIN
+    INSERT INTO library_audit(old_book_id, old_book_name, old_author_name, old_price, operation_type)
+    VALUES (OLD.book_id, OLD.book_name, OLD.author_name, OLD.price, 'update');
+END;
+//
+
+-- Create BEFORE DELETE trigger
+CREATE TRIGGER before_library_delete
+BEFORE DELETE ON library
+FOR EACH ROW
+BEGIN
+    INSERT INTO library_audit(old_book_id, old_book_name, old_author_name, old_price, operation_type)
+    VALUES (OLD.book_id, OLD.book_name, OLD.author_name, OLD.price, 'delete');
+END;
+//
+
+-- Reset delimiter to default
+DELIMITER ;
+
+-- Test the BEFORE UPDATE trigger
+UPDATE library
+SET book_name = 'Gatsby (Updated)', author_name = 'Fitzgerald'
+WHERE book_id = 1;
+
+-- Test the BEFORE DELETE trigger
+DELETE FROM library WHERE book_id = 2;
+
+-- View the audit log in library_audit
+SELECT * FROM library_audit;
+
+-- View the remaining records in library
+SELECT * FROM library;
