@@ -20,27 +20,35 @@ INSERT INTO o_rollcall VALUES (5, 'Abhi', 'Satara');
 
 -- Create procedure
 DELIMITER //
+
 CREATE PROCEDURE p3(IN r1 INT)
 BEGIN
     DECLARE r2 INT;
-    DECLARE exit_loop BOOLEAN;
-    DECLARE c1 CURSOR FOR SELECT roll_no FROM o_rollcall WHERE roll_no > r1;
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET exit_loop = TRUE;
+    DECLARE done BOOLEAN DEFAULT FALSE;
+
+    DECLARE c1 CURSOR FOR 
+        SELECT roll_no FROM o_rollcall WHERE roll_no > r1;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
     OPEN c1;
+
     e_loop: LOOP
         FETCH c1 INTO r2;
-
-        IF NOT EXISTS (SELECT * FROM n_rollcall WHERE roll_no = r2) THEN
-            INSERT INTO n_rollcall SELECT * FROM o_rollcall WHERE roll_no = r2;
-        END IF;
-
-        IF exit_loop THEN
-            CLOSE c1;
+        
+        IF done THEN 
             LEAVE e_loop;
         END IF;
+
+        IF NOT EXISTS (SELECT * FROM n_rollcall WHERE roll_no = r2) THEN
+            INSERT INTO n_rollcall 
+            SELECT * FROM o_rollcall WHERE roll_no = r2;
+        END IF;
     END LOOP e_loop;
+
+    CLOSE c1;
 END //
+
 DELIMITER ;
 
 -- Call the procedure with different parameters
