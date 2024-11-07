@@ -1,0 +1,75 @@
+-- Step 1: Create Tables
+CREATE TABLE Salesman (
+    Saleman_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    city VARCHAR(50),
+    commission DECIMAL(5, 2)
+);
+
+CREATE TABLE Customers (
+    Customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(50),
+    city VARCHAR(50),
+    grade INT,
+    Saleman_id INT,
+    FOREIGN KEY (Saleman_id) REFERENCES Salesman(Saleman_id)
+);
+
+CREATE TABLE Orders (
+    ord_no INT PRIMARY KEY,
+    ord_date DATE,
+    purch_amt DECIMAL(10, 2),
+    Customer_id INT,
+    Saleman_id INT,
+    FOREIGN KEY (Customer_id) REFERENCES Customers(Customer_id),
+    FOREIGN KEY (Saleman_id) REFERENCES Salesman(Saleman_id)
+);
+
+-- Step 2: Insert Sample Data
+INSERT INTO Salesman (Saleman_id, name, city, commission) VALUES 
+(1, 'John', 'New York', 0.10),
+(2, 'Alice', 'Paris', 0.12),
+(3, 'Mike', 'Los Angeles', 0.15);
+
+INSERT INTO Customers (Customer_id, customer_name, city, grade, Saleman_id) VALUES 
+(1, 'Tom', 'New York', 100, 1),
+(2, 'Sarah', 'Paris', 200, 2),
+(3, 'Jim', 'Chicago', 150, 1),
+(4, 'Emma', 'Los Angeles', 100, 3);
+
+INSERT INTO Orders (ord_no, ord_date, purch_amt, Customer_id, Saleman_id) VALUES 
+(101, '2012-10-10', 300.00, 1, 1),
+(102, '2012-10-10', 500.00, 2, 2),
+(103, '2012-10-11', 150.00, 3, 1),
+(104, '2012-10-11', 700.00, 4, 3);
+
+-- Step 3: Queries
+
+-- 1. Find the name and city of those customers and salesmen who live in the same city.
+SELECT c.customer_name, c.city, s.name AS salesman_name
+FROM Customers c
+INNER JOIN Salesman s ON c.city = s.city;
+
+-- 2. Find the names of all customers along with the salesmen who work for them.
+SELECT c.customer_name, s.name AS salesman_name
+FROM Customers c
+INNER JOIN Salesman s ON c.Saleman_id = s.Saleman_id;
+
+-- 3. Display all those orders by the customers not located in the same cities where their salesmen live.
+SELECT o.ord_no, c.customer_name, c.city AS customer_city, s.name AS salesman_name, s.city AS salesman_city
+FROM Orders o
+INNER JOIN Customers c ON o.Customer_id = c.Customer_id
+INNER JOIN Salesman s ON o.Saleman_id = s.Saleman_id
+WHERE c.city <> s.city;
+
+-- 4. Display all the orders which values are greater than the average order value for October 10, 2012.
+SELECT ord_no, purch_amt
+FROM Orders
+WHERE ord_date = '2012-10-10' 
+  AND purch_amt > (SELECT AVG(purch_amt) FROM Orders WHERE ord_date = '2012-10-10');
+
+-- 5. Find all orders attributed to salesmen in Paris.
+SELECT o.ord_no, o.purch_amt, s.name AS salesman_name
+FROM Orders o
+INNER JOIN Salesman s ON o.Saleman_id = s.Saleman_id
+WHERE s.city = 'Paris';
