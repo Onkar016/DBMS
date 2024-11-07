@@ -54,3 +54,55 @@ call om(2) ; $$
 select * from fine; $$
 
 select * from borrower;
+
+
+
+
+
+
+
+
+
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE om(IN roll INT)
+BEGIN
+    DECLARE totalfine INT;
+    DECLARE issuedate DATE;
+    DECLARE noofdays INT;
+
+    -- Get the Date of Issue
+    SELECT DateofIssue INTO issuedate FROM borrower WHERE rollin = roll;
+
+    -- Calculate the difference in days
+    SELECT DATEDIFF(CURDATE(), issuedate) INTO noofdays;
+
+    -- Fine Calculation Logic
+    IF noofdays > 15 AND noofdays <= 30 THEN
+        SET totalfine = noofdays * 5;
+    ELSEIF noofdays > 30 THEN
+        SET totalfine = ((noofdays - 30) * 50) + (15 * 5);
+    ELSE
+        SET totalfine = 0;
+    END IF;
+
+    -- Insert Fine record
+    INSERT INTO fine (rollno, returndate, amount) VALUES (roll, CURDATE(), totalfine);
+
+    -- Update Borrower Status
+    UPDATE borrower SET status = 'RETURN' WHERE rollin = roll;
+END $$
+
+DELIMITER ;
+
+
+
+CALL om(1);
+CALL om(2);
+
+
+DROP PROCEDURE IF EXISTS om;
+
