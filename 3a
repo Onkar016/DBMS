@@ -1,0 +1,65 @@
+-- 1. Create Tables
+CREATE TABLE Student (
+    Roll INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Address VARCHAR(100)
+);
+
+CREATE TABLE Subject (
+    sub_code CHAR(10) PRIMARY KEY,
+    sub_name VARCHAR(50)
+);
+
+CREATE TABLE Marks (
+    Roll INT,
+    sub_code CHAR(10),
+    marks INT,
+    FOREIGN KEY (Roll) REFERENCES Student(Roll),
+    FOREIGN KEY (sub_code) REFERENCES Subject(sub_code)
+);
+
+-- 2. Insert 5 values into each table
+
+-- Insert values into the Student table
+INSERT INTO Student (Roll, Name, Address) VALUES 
+(1, 'Alice Johnson', '123 Main St'),
+(2, 'Bob Smith', '456 Elm St'),
+(3, 'Carol Williams', '789 Oak St'),
+(4, 'David Brown', '101 Maple Ave'),
+(5, 'Emma Wilson', '202 Birch Rd');
+
+-- Insert values into the Subject table
+INSERT INTO Subject (sub_code, sub_name) VALUES 
+('CS101', 'Computer Science'),
+('MA102', 'Mathematics'),
+('PH103', 'Physics'),
+('CH104', 'Chemistry'),
+('DMS', 'Discrete Mathematics');
+
+-- Insert values into the Marks table
+INSERT INTO Marks (Roll, sub_code, marks) VALUES 
+(1, 'CS101', 85),
+(2, 'MA102', 74),
+(3, 'PH103', 92),
+(4, 'CH104', 88),
+(5, 'DMS', 67),
+(1, 'MA102', 90),
+(2, 'PH103', 76),
+(3, 'CH104', 82),
+(4, 'DMS', 55),
+(5, 'CS101', 78);
+
+-- 3. Update rows where the sub_code is “DMS”
+UPDATE Marks
+SET marks = 80
+WHERE sub_code = 'DMS';
+
+-- 4. Find students whose marks are less than 75
+SELECT Student.Roll, Student.Name, Marks.sub_code, Marks.marks
+FROM Student
+JOIN Marks ON Student.Roll = Marks.Roll
+WHERE Marks.marks < 75;
+
+-- 5. Delete the record of the student whose name is “Pratik”
+DELETE FROM Student
+WHERE Name = 'Pratik';
