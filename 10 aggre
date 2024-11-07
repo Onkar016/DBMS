@@ -1,0 +1,28 @@
+use agg;
+
+-- Create a collection named 'stud'
+db.createCollection('stud');
+
+-- Insert documents into the 'stud' collection
+db.stud.insertOne({ id: 1, class: 'a', marks: 90 });
+db.stud.insertOne({ id: 2, class: 'B', marks: 69 });
+db.stud.insertOne({ id: 3, class: 'C', marks: 89 });
+db.stud.insertOne({ id: 4, class: 'B', marks: 78 });
+db.stud.insertOne({ id: 5, class: 'a', marks: 85 });
+db.stud.insertOne({ id: 6, class: 'B', marks: 79 });
+db.stud.insertOne({ id: 7, class: 'C', marks: 60 });
+
+-- Display all documents in the 'stud' collection
+db.stud.find().pretty();
+
+-- Create an index on the 'id' field in the 'stud' collection
+db.stud.createIndex({ id: 1 });
+
+-- Display all indexes in the 'stud' collection
+db.stud.getIndexes();
+
+-- Aggregate documents to filter only those with class "B"
+db.stud.aggregate([{ $match: { class: "B" } }]);
+
+-- Aggregate documents by class and calculate total marks for each class
+db.stud.aggregate([{ $group: { _id: "$class", totalmarks: { $sum: "$marks" } } }]);
