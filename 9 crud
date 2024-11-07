@@ -1,0 +1,27 @@
+-- Switch to the database
+use student121;
+
+-- Create a collection named 'student'
+db.createCollection('student');
+
+-- Insert documents into the 'student' collection
+db.student.insertOne({ rollno: 1, name: "onkar", div: "A" });
+db.student.insertOne({ rollno: 2, name: "ram", div: "A" });
+db.student.insertOne({ rollno: 3, name: "sam", div: "B" });
+db.student.insertOne({ rollno: 4, name: "jony", div: "C" });
+db.student.insertOne({ rollno: 5, name: "tomy", div: "B" });
+
+-- Display all documents in the 'student' collection
+db.student.find().pretty();
+
+-- Update the division of the student with rollno 2 to "C"
+db.student.updateOne({ rollno: 2 }, { $set: { div: "C" } });
+
+-- Display all documents in the 'student' collection after the update
+db.student.find().pretty();
+
+-- Delete the document where rollno is 4
+db.student.deleteOne({ rollno: 4 });
+
+-- Display all documents in the 'student' collection after the deletion
+db.student.find().pretty();
