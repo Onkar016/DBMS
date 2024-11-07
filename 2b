@@ -31,3 +31,26 @@ SELECT * FROM SubjectView;
 
 -- Display Indexes on the Marks Table (for MySQL)
 SHOW INDEX FROM Marks;
+
+INSERT INTO Student (Roll, Name, Address, DOB) VALUES 
+(1, 'Alice Johnson', '123 Main St', '2002-05-14'),
+(2, 'Bob Smith', '456 Elm St', '2001-11-20'),
+(3, 'Carol Williams', '789 Oak St', '2003-02-08');
+
+-- Inserting Data into the Subject Table
+INSERT INTO Subject (sub_code, sub_name) VALUES 
+('CS101', 'Computer Science'),
+('MA102', 'Mathematics'),
+('PH103', 'Physics');
+
+-- Inserting Data into the Marks Table
+INSERT INTO Marks (Roll, sub_code, marks) VALUES 
+(1, 'CS101', 85),
+(1, 'MA102', 90),
+(1, 'PH103', 78),
+(2, 'CS101', 88),
+(2, 'MA102', 76),
+(2, 'PH103', 92),
+(3, 'CS101', 91),
+(3, 'MA102', 83),
+(3, 'PH103', 87);
