@@ -1,0 +1,78 @@
+package p88;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
+import org.bson.Document;
+
+public class ha {
+    public static void main(String[] args) {
+        // MongoDB connection string
+        String uri = "mongodb://localhost:27017";
+
+        // Connect to MongoDB
+        try (MongoClient mongoClient = MongoClients.create(uri)) {
+            // Access the database
+            MongoDatabase database = mongoClient.getDatabase("student11");
+
+            // Access the collection
+            MongoCollection<Document> collection = database.getCollection("stud");
+
+            // 1. Insert a new document
+            Document newStudent = new Document("name", "David")
+                    .append("department", "Physics")
+                    .append("marks", 88);
+            collection.insertOne(newStudent);
+            System.out.println("Inserted new student document.");
+
+            // 2. Update a document
+            // Find the document where name is "Alice" and update marks to 90
+            collection.updateOne(Filters.eq("name", "Alice"), Updates.set("marks", 90));
+            System.out.println("Updated Alice's marks.");
+
+            // 3. Delete a document
+            // Delete the document where name is "Bob"
+            collection.deleteOne(Filters.eq("name", "Bob"));
+            System.out.println("Deleted document where name is Bob.");
+
+            // 4. Retrieve and print all documents in the collection
+            System.out.println("Current documents in the collection:");
+            try (MongoCursor<Document> cursor = collection.find().iterator()) {
+                while (cursor.hasNext()) {
+                    Document doc = cursor.next();
+                    System.out.println("Name: " + doc.getString("name"));
+                    System.out.println("Department: " + doc.getString("department"));
+                    System.out.println("Marks: " + doc.getInteger("marks"));
+                    System.out.println("-----------------------");
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("An error occurred while connecting to MongoDB: " + e.getMessage());
+        }
+    }
+}
+
+
+
+
+use student11                 // Switch to or create the database
+db.createCollection("stud")   // Create the collection
+
+// Insert documents
+db.stud.insertMany([
+    { "name": "Alice", "department": "Computer Science", "marks": 85 },
+    { "name": "Bob", "department": "Mathematics", "marks": 78 },
+    { "name": "Charlie", "department": "Engineering", "marks": 92 }
+])
+
+// Verify documents
+db.stud.find().pretty()
+
+// Check database and collection
+show databases
+use student11
+show collections
