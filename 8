@@ -1,0 +1,19 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+
+public class MySQLConnection {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/your_database";  // Replace "your_database" with your actual database name
+        String username = "root";  // Replace with your MySQL username
+        String password = "your_password";  // Replace with your MySQL password
+
+        try {
+            Connection conn = DriverManager.getConnection(url, username, password);
+            System.out.println("Connected to the database successfully!");
+            conn.close();
+        } catch (Exception e) {
+            System.out.println("Failed to connect to the database.");
+            e.printStackTrace();
+        }
+    }
+}
