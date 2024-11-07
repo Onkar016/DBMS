@@ -1,0 +1,65 @@
+-- 1. Create Tables
+CREATE TABLE Student (
+    Roll INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Address VARCHAR(100)
+);
+
+CREATE TABLE Subject (
+    sub_code CHAR(10) PRIMARY KEY,
+    sub_name VARCHAR(50)
+);
+
+CREATE TABLE Marks (
+    Roll INT,
+    sub_code CHAR(10),
+    marks INT,
+    FOREIGN KEY (Roll) REFERENCES Student(Roll),
+    FOREIGN KEY (sub_code) REFERENCES Subject(sub_code)
+);
+
+-- 2. Add new column DOB into the table Student
+ALTER TABLE Student ADD DOB DATE;
+
+-- 3. Modify the data type of the Address column
+ALTER TABLE Student MODIFY Address VARCHAR(150);
+
+-- 4. Rename the column sub_code to code in Subject table
+ALTER TABLE Subject RENAME COLUMN sub_code TO code;
+
+-- 5. Rename the table name Subject to Sub
+ALTER TABLE Subject RENAME TO Sub;
+
+-- 6. Drop the tables
+DROP TABLE IF EXISTS Marks;
+DROP TABLE IF EXISTS Sub;
+DROP TABLE IF EXISTS Student;
+
+-- 7. Truncate the tables
+TRUNCATE TABLE Marks;
+TRUNCATE TABLE Subject;
+TRUNCATE TABLE Student;
+
+-- Inserting Data into the Student Table
+INSERT INTO Student (Roll, Name, Address, DOB) VALUES 
+(1, 'Alice Johnson', '123 Main St', '2002-05-14'),
+(2, 'Bob Smith', '456 Elm St', '2001-11-20'),
+(3, 'Carol Williams', '789 Oak St', '2003-02-08');
+
+-- Inserting Data into the Subject Table
+INSERT INTO Subject (sub_code, sub_name) VALUES 
+('CS101', 'Computer Science'),
+('MA102', 'Mathematics'),
+('PH103', 'Physics');
+
+-- Inserting Data into the Marks Table
+INSERT INTO Marks (Roll, sub_code, marks) VALUES 
+(1, 'CS101', 85),
+(1, 'MA102', 90),
+(1, 'PH103', 78),
+(2, 'CS101', 88),
+(2, 'MA102', 76),
+(2, 'PH103', 92),
+(3, 'CS101', 91),
+(3, 'MA102', 83),
+(3, 'PH103', 87);
